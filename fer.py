@@ -3,91 +3,45 @@
 
 # In[1]:
 
-
-#import pandas as pd  
-import numpy as np  
-import time
-a=time.time()
-Y = []
-X = []
-first = True
-for line in open('./data/fer2013.csv'):
-    if first:
-        first = False
-    else:
-        row = line.split(',')
-        Y.append(int(row[0]))
-        X.append([int(p) for p in row[1].split()])
-X, Y = np.array(X), np.array(Y)
-b=time.time()
-print("costtime is"+str(b-a)+"s")
-
-
-# In[2]:
-
-
-Y[Y>0]=Y[Y>0]-1
-
-
-# In[3]:
-
-
-from keras.utils.np_utils import to_categorical
-print(X.shape)
-print(Y.shape)
-y_train = to_categorical(Y)
-
-
-# In[4]:
-
-
-print(y_train.shape)
-X=X.reshape([-1,48,48,1])
-
-
-# In[5]:
-
-
-train_x=X[0:34000]
-train_y=y_train[0:34000]
-test_x=X[34000:35887]
-test_y=y_train[34000:35887]
-print(train_y.shape)
-print(train_x.shape)
-
-
-# In[6]:
-
-
-# Standardize data to have feature values between 0 and 1.
-train_x = train_x / 255.
-test_x = test_x / 255.
-
-
-# In[7]:
-
-
-
 import pandas as pd
 import numpy as np
 import random
 import sys
-
-
-# In[8]:
-
-
+import numpy as np  
+import time
+from keras.utils.np_utils import to_categorical
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.optimizers import SGD, RMSprop
-from keras.utils.np_utils import to_categorical
-
-
-# In[ ]:
-
-
+#import pandas as pd  
+def load_data(path='./fer2013/fer2013.csv'):
+    a=time.time()
+    Y = []
+    X = []
+    first = True
+    for line in open(path):
+        if first:
+            first = False
+        else:
+            row = line.split(',')
+            Y.append(int(row[0]))
+            X.append([int(p) for p in row[1].split()])
+    X, Y = np.array(X), np.array(Y)
+    b=time.time()
+    print("cost-time is"+str(b-a)+"s")
+    return X,Y
+def deal_data(X,Y):
+    Y[Y>0]=Y[Y>0]-1
+    Y = to_categorical(Y)
+    X=X.reshape([-1,48,48,1])
+    X = X / 255.
+    train_x=X[0:34000]
+    train_y=Y[0:34000]
+    test_x=X[34000:35887]
+    test_y=Y[34000:35887]
+    return X,Y,train_x,train_y,test_x,test_y
 def describe(X_shape, y_shape, batch_size, dropout, nb_epoch, conv_arch, dense):
     print (' X_train shape: ', X_shape )# (n_sample, 1, 48, 48)
     print (' y_train shape: ', y_shape) # (n_sample, n_categories)
@@ -187,12 +141,13 @@ def cnn_architecture(X_train, y_train, conv_arch=[(32,3),(64,3),(128,3)],
 
 # In[ ]:
 
-
-model=cnn_architecture(train_x, train_y, conv_arch=[(32,3),(64,3),(128,3)], dense=[64,2], dropout=0.42, batch_size=128, nb_epoch=20, dirpath = './data/results/')
-
+#x,y=load_data()
+#x,y,train_x,train_y,cx,cy=deal_data(x.y)
+#model=cnn_architecture(train_x,train_y,conv_arch=[(32,3),(64,3),(128,3)],dense=[64,2],dropout=0.42,batch_size=128,nb_epoch=10,dirpath='./data/results/')
+#model.fit(train_x, train_y, epochs=5, batch_size=128,validation_data=[cx,cy], callbacks=[], shuffle=True, verbose=1)
 
 # In[ ]:
 
 
-model.save('mymode'+str(int(time.time()/100000))+'.h5')
+#model.save('mymode'+str(int(time.time()/100000))+'.h5')
 
