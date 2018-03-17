@@ -1,2 +1,8 @@
 
 data/fer2013.csv
+x_train.npy
+y_train.npy
+numpy_fer.zip
+*.csv
+data/fer2013.tar.gz
+*.h5
